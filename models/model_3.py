@@ -185,9 +185,6 @@ dataloader = DataLoader(dataset, shuffle=True)
 
 import numpy as np
 import torch.optim as optim
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters())
-
 from sklearn.model_selection import KFold
 from torch.utils.tensorboard import SummaryWriter
 
@@ -197,6 +194,8 @@ for fold, (train_idxs, test_idxs) in enumerate(kf.split(idxs)):
     writer = SummaryWriter(f'/spell/tensorboards/experiment_3_fold_{fold}')
     model = UNet()
     model.cuda()
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters())
     
     for epoch in range(NUM_EPOCHS):
         losses = []
