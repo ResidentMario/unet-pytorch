@@ -183,15 +183,10 @@ dataroot = Path('/spell/bob-ross-kaggle-dataset/')
 dataset = BobRossSegmentedImagesDataset(dataroot)
 dataloader = DataLoader(dataset, shuffle=True)
 
-model = UNet()
-model.cuda()
-
-
 import numpy as np
 import torch.optim as optim
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters())
-
 
 from sklearn.model_selection import KFold
 from torch.utils.tensorboard import SummaryWriter
@@ -200,6 +195,8 @@ kf = KFold(n_splits=NUM_FOLDS, shuffle=True)
 idxs = list(range(len(dataset)))
 for fold, (train_idxs, test_idxs) in enumerate(kf.split(idxs)):
     writer = SummaryWriter(f'/spell/tensorboards/experiment_3_fold_{fold}')
+    model = UNet()
+    model.cuda()
     
     for epoch in range(NUM_EPOCHS):
         losses = []
