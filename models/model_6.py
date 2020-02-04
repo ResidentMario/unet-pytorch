@@ -242,8 +242,8 @@ writer = SummaryWriter(f'/spell/tensorboards/experiment_6')
 model = UNet()
 model.cuda()
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters())
-scheduler = optim.lr_scheduler.OneCycleLR(optimizer, max_lr=0.5)
+optimizer = optim.Adam(model.parameters(), lr=0.5)
+scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=32)
 
 
 for epoch in range(NUM_EPOCHS):
