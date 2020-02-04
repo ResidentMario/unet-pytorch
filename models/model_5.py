@@ -1,5 +1,6 @@
 
-NUM_EPOCHS = 40
+# number of epochs of training
+NUM_EPOCHS = 50
 
 import torch
 from torchvision.datasets import ImageFolder
@@ -18,7 +19,12 @@ class BobRossSegmentedImagesDataset(Dataset):
         self.transform = transforms.Compose([
             transforms.Resize((164, 164)),
             transforms.Pad(46, padding_mode='reflect'),
+            transforms.RandomHorizontalFlip(),
             transforms.ToTensor()
+            transforms.Normalize(
+                mean=(0.459387, 0.46603974, 0.4336706),
+                std=(0.06098535 0.05802868 0.08737113)
+            )
         ])
         self.color_key = {
             3 : 0,
@@ -69,7 +75,6 @@ class BobRossSegmentedImagesDataset(Dataset):
         seg = seg[46:210, 46:210]
         
         return img, seg
-    
     
 from torch import nn
 
