@@ -20,10 +20,10 @@ class BobRossSegmentedImagesDataset(Dataset):
             transforms.Resize((164, 164)),
             transforms.Pad(46, padding_mode='reflect'),
             transforms.RandomHorizontalFlip(),
-            transforms.ToTensor()
+            transforms.ToTensor(),
             transforms.Normalize(
-                mean=(0.459387, 0.46603974, 0.4336706),
-                std=(0.06098535 0.05802868 0.08737113)
+                            mean=(0.459387, 0.46603974, 0.4336706),
+                            std=(0.06098535, 0.05802868, 0.08737113)
             )
         ])
         self.color_key = {
