@@ -1,4 +1,3 @@
-
 # number of epochs of training
 NUM_EPOCHS = 50
 
@@ -17,14 +16,7 @@ class BobRossSegmentedImagesDataset(Dataset):
         self.imgs = list((self.dataroot / 'train' / 'images').rglob('*.png'))
         self.segs = list((self.dataroot / 'train' / 'labels').rglob('*.png'))
         self.transform = transforms.Compose([
-            transforms.Resize((164, 164)),
-            transforms.Pad(46, padding_mode='reflect'),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize(
-                            mean=(0.459387, 0.46603974, 0.4336706),
-                            std=(0.06098535, 0.05802868, 0.08737113)
-            )
+            transforms.Resize((256, 256)), transforms.ToTensor()
         ])
         self.color_key = {
             3 : 0,
@@ -44,10 +36,6 @@ class BobRossSegmentedImagesDataset(Dataset):
         return len(self.imgs)
     
     def __getitem__(self, i):
-        def translate(x):
-            return self.color_key[x]
-        translate = np.vectorize(translate)
-        
         img = Image.open(self.imgs[i])
         img = self.transform(img)
         
@@ -58,7 +46,7 @@ class BobRossSegmentedImagesDataset(Dataset):
         # we have to apply a remap operation over the labels in a just-in-time
         # manner. This slows things down, but it's fine, this is just a demo
         # anyway.
-        seg = translate(np.array(seg)).astype('int64')
+        seg = np.array(seg).astype('int64')
         
         # One-hot encode the segmentation mask.
         # def ohe_mat(segmap):
@@ -75,7 +63,8 @@ class BobRossSegmentedImagesDataset(Dataset):
         seg = seg[46:210, 46:210]
         
         return img, seg
-    
+
+
 from torch import nn
 
 class UNet(nn.Module):
@@ -236,7 +225,7 @@ dataroot = Path('/spell/bob-ross-kaggle-dataset/')
 dataset = BobRossSegmentedImagesDataset(dataroot)
 sampler = torch.utils.data.distributed.DistributedSampler(dataset, num_replicas=hvd.size(), rank=hvd.rank())
 # dataloader = DataLoader(dataset, shuffle=True, batch_size=8)
-dataloader = DataLoader(dataset, batch_size=8, sampler=sampler, **kwargs)
+dataloader = DataLoader(dataset, batch_size=8, sampler=sampler)
 
 
 import numpy as np
